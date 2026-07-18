@@ -1,0 +1,18 @@
+# Copy to ~/.config/mcp-server-open-router/config.toml and fill in your key.
+
+# Required: your OpenRouter API key (https://openrouter.ai/settings/keys)
+api_key = "sk-or-..."
+
+# Optional: override the API base URL.
+# base_url = "https://openrouter.ai/api/v1"
+
+# Optional: default model used when a tool call omits `model`.
+# default_model = "moonshotai/kimi-k3"
+
+# Optional: default max output tokens; only sent when set (models otherwise use their own defaults).
+# default_max_tokens = 8192
+
+# Optional: app attribution sent to OpenRouter on every request
+# (shows on your OpenRouter activity page / leaderboards).
+# app_name = "mcp-server-open-router"   # sent as X-Title
+# site_url = "https://example.com"      # sent as HTTP-Referer
