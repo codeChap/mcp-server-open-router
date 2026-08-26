@@ -165,18 +165,13 @@ impl OpenRouterServer {
 
         // Treat as local path.
         let path = std::path::Path::new(input);
-        let ext = path
-            .extension()
-            .and_then(|e| e.to_str())
-            .unwrap_or("");
+        let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
         let mime = Self::mime_for_extension(ext).ok_or_else(|| {
-            format!(
-                "Unsupported image extension '{ext}' — supported: png, jpg, jpeg, webp, gif"
-            )
+            format!("Unsupported image extension '{ext}' — supported: png, jpg, jpeg, webp, gif")
         })?;
 
-        let bytes = std::fs::read(path)
-            .map_err(|e| format!("Failed to read image file '{input}': {e}"))?;
+        let bytes =
+            std::fs::read(path).map_err(|e| format!("Failed to read image file '{input}': {e}"))?;
         if bytes.len() > MAX_IMAGE_BYTES {
             return Err(format!(
                 "Image file '{input}' is {} bytes (max {} bytes / 20 MB)",
@@ -201,7 +196,9 @@ impl OpenRouterServer {
                 if let Some(err) = &resp.error {
                     return Ok(CallToolResult::error(vec![Content::text(err.render())]));
                 }
-                Ok(CallToolResult::success(vec![Content::text(resp.to_string())]))
+                Ok(CallToolResult::success(vec![Content::text(
+                    resp.to_string(),
+                )]))
             }
             Err(e) => Ok(CallToolResult::error(vec![Content::text(e.to_string())])),
         }
@@ -324,8 +321,7 @@ impl OpenRouterServer {
         debug!(model = ?p.model, "chat_with_vision tool called");
         Self::validate_temperature(p.temperature)?;
 
-        let url =
-            Self::resolve_image(&p.image).map_err(|e| McpError::invalid_params(e, None))?;
+        let url = Self::resolve_image(&p.image).map_err(|e| McpError::invalid_params(e, None))?;
 
         let messages = vec![ChatMessage::user_with_image(
             &p.prompt,
@@ -426,7 +422,10 @@ impl OpenRouterServer {
             Some(f) => format!("{shown} of {total} models (filter: \"{f}\")"),
             None => format!("{total} models"),
         };
-        let lines: Vec<String> = filtered.iter().map(|m| Self::format_model_line(m)).collect();
+        let lines: Vec<String> = filtered
+            .iter()
+            .map(|m| Self::format_model_line(m))
+            .collect();
         let result = format!("{header}\n{}", lines.join("\n"));
         Ok(CallToolResult::success(vec![Content::text(result)]))
     }
@@ -441,7 +440,9 @@ impl OpenRouterServer {
             .request::<(), CreditsResponse>(Method::GET, "/credits", None)
             .await
         {
-            Ok(resp) => Ok(CallToolResult::success(vec![Content::text(resp.to_string())])),
+            Ok(resp) => Ok(CallToolResult::success(vec![Content::text(
+                resp.to_string(),
+            )])),
             Err(e) => Ok(CallToolResult::error(vec![Content::text(e.to_string())])),
         }
     }
@@ -535,9 +536,16 @@ mod tests {
     #[test]
     fn build_chat_request_always_includes_usage() {
         let msgs = vec![ChatMessage::user("hello")];
-        let req =
-            OpenRouterServer::build_chat_request("moonshotai/kimi-k3", msgs, None, None, None, None, None)
-                .unwrap();
+        let req = OpenRouterServer::build_chat_request(
+            "moonshotai/kimi-k3",
+            msgs,
+            None,
+            None,
+            None,
+            None,
+            None,
+        )
+        .unwrap();
         let v = serde_json::to_value(&req).unwrap();
         assert_eq!(v["usage"]["include"], true);
         assert_eq!(v["model"], "moonshotai/kimi-k3");
@@ -588,7 +596,8 @@ mod tests {
     fn build_reasoning_matrix() {
         assert!(OpenRouterServer::build_reasoning(None, false).is_none());
 
-        let hidden = OpenRouterServer::build_reasoning(Some(ReasoningEffort::Medium), false).unwrap();
+        let hidden =
+            OpenRouterServer::build_reasoning(Some(ReasoningEffort::Medium), false).unwrap();
         assert_eq!(hidden["effort"], "medium");
         assert_eq!(hidden["exclude"], true);
 
@@ -750,8 +759,7 @@ mod tests {
             .create_async()
             .await;
 
-        let client =
-            OpenRouterClient::new("test-key".into(), server.url(), None, None);
+        let client = OpenRouterClient::new("test-key".into(), server.url(), None, None);
         let srv = OpenRouterServer::new(client, None, None);
         let result = srv
             .chat(Parameters(ChatParams {
@@ -788,8 +796,7 @@ mod tests {
             .create_async()
             .await;
 
-        let client =
-            OpenRouterClient::new("test-key".into(), server.url(), None, None);
+        let client = OpenRouterClient::new("test-key".into(), server.url(), None, None);
         let srv = OpenRouterServer::new(client, None, None);
         let result = srv
             .chat(Parameters(ChatParams {

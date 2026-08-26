@@ -253,10 +253,7 @@ impl ApiErrorBody {
                 s.trim_matches('"').to_string()
             })
             .unwrap_or_else(|| "unknown".into());
-        let message = self
-            .message
-            .as_deref()
-            .unwrap_or("unknown");
+        let message = self.message.as_deref().unwrap_or("unknown");
         let mut out = format!("OpenRouter error ({code}): {message}");
         if let Some(meta) = &self.metadata
             && !meta.is_null()

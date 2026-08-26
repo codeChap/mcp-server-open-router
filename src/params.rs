@@ -103,9 +103,7 @@ pub struct SearchParams {
     #[schemars(description = "Optional system prompt")]
     pub system_prompt: Option<String>,
 
-    #[schemars(
-        description = "Model ID. Defaults to the configured default (moonshotai/kimi-k3)."
-    )]
+    #[schemars(description = "Model ID. Defaults to the configured default (moonshotai/kimi-k3).")]
     pub model: Option<String>,
 
     #[schemars(
